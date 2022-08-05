@@ -19,9 +19,7 @@ const createNewUser = async (req, res) => {
 	} catch (error) {
 		res.status(error?.status || 500).json({
 			isError: true,
-			data: {
-				error: error?.message || error,
-			},
+			error: error?.message || error,
 		});
 	}
 };
@@ -34,20 +32,18 @@ const findUser = async (req, res) => {
 		if (!(email && password)) {
 			return res.status(400).send({
 				isError: true,
-				error: 'All input is required',
+				error: 'Please provide valid user name and password',
 			});
 		}
 
-		// Create user in our database
+		// Find user in our database
 		const user = await authService.findUser(req.body);
-		// return new user
+		// return the user
 		res.status(200).json(user);
 	} catch (error) {
 		res.status(error?.status || 500).json({
 			isError: true,
-			data: {
-				error: error?.message || error,
-			},
+			error: error?.message || error,
 		});
 	}
 };

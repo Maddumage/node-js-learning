@@ -15,8 +15,10 @@ const createNewUser = async (newUser) => {
 				message: `User with the email address ${email} already exists`,
 			};
 		}
+		// generate salt to hash password
+		const salt = await bcrypt.genSalt(10);
 		//Encrypt user password
-		const encryptedPassword = await bcrypt.hash(password, 10);
+		const encryptedPassword = await bcrypt.hash(password, salt);
 		// Create user in our database
 		const user = await User.create({
 			...newUser,
@@ -47,24 +49,35 @@ const findUser = async (oldUser) => {
 		const { email, password } = oldUser;
 		// Validate if user exist in our database
 		const user = await User.findOne({ email });
-		if (user && bcrypt.compare(password, user.password)) {
-			// Create token
-			const token = jwt.sign(
-				{ user_id: user._id, email },
-				process.env.TOKEN_KEY,
-				{
-					expiresIn: '2h',
-				}
+		if (user) {
+			const isValidPassword = await bcrypt.compare(
+				password,
+				user.password
 			);
+			if (isValidPassword) {
+				// Create token
+				const token = jwt.sign(
+					{ user_id: user._id, email },
+					process.env.TOKEN_KEY,
+					{
+						expiresIn: '2h',
+					}
+				);
 
-			// save user token
-			user.token = token;
-			// user
-			return user;
+				// save user token
+				user.token = token;
+				// user
+				return user;
+			} else {
+				throw {
+					status: 400,
+					message: 'Invalid password',
+				};
+			}
 		} else {
 			throw {
-				status: 400,
-				message: 'Invalid Credentials',
+				status: 401,
+				message: `Cannot find the user with email ${email}`,
 			};
 		}
 	} catch (error) {

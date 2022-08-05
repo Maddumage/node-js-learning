@@ -1,17 +1,17 @@
 const Auth = require('../database/Auth');
 
-const createNewUser = (newUser) => {
+const createNewUser = async (newUser) => {
 	try {
-		const user = Auth.createNewUser(newUser);
+		const user = await Auth.createNewUser(newUser);
 		return user;
 	} catch (error) {
 		throw error;
 	}
 };
 
-const findUser = (oldUser) => {
+const findUser = async (oldUser) => {
 	try {
-		const user = Auth.findUser(oldUser);
+		const user = await Auth.findUser(oldUser);
 		return user;
 	} catch (error) {
 		throw error;
