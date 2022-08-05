@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { MONGO_URI } = process.env;
+const config = require('./server');
 
 const options = {
 	autoIndex: true, // Don't build indexes
@@ -11,16 +11,22 @@ const options = {
 };
 
 exports.connect = () => {
-	// Connecting to the database
-	mongoose.connect(MONGO_URI, options)
-		.then(() => {
-			console.log('Successfully connected to database');
-		})
-		.catch((error) => {
-			console.log(
-				'database connection failed. exiting now...'
-			);
-			console.error(error);
-			process.exit(1);
-		});
+	try {
+		// Connecting to the database
+		mongoose.connect(config.MONGO_URI, options)
+			.then(() => {
+				console.log(
+					'Successfully connected to database'
+				);
+			})
+			.catch((error) => {
+				console.log(
+					'database connection failed. exiting now...'
+				);
+				console.error(error);
+				process.exit(1);
+			});
+	} catch (error) {
+		console.log(error);
+	}
 };

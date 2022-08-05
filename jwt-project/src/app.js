@@ -7,6 +7,8 @@ const v1AuthRouter = require('./v1/routes/authRoutes');
 
 const { API_PORT } = process.env;
 
+const PORT = API_PORT || 3000;
+
 const app = express();
 
 app.use(morgan('dev'));
@@ -23,6 +25,6 @@ app.use('*', (req, res) => {
 });
 
 // server listening
-app.listen(API_PORT, () => {
-	console.log(`Server running on port ${API_PORT}`);
+app.listen(PORT, () => {
+	console.log(`Server running on port ${PORT}`);
 });

@@ -48,6 +48,38 @@ const findUser = async (req, res) => {
 	}
 };
 
+const refreshToken = async (req, res) => {
+	try {
+		// console.log(res);
+		const token =
+			req.body.token ||
+			req.query.token ||
+			req.headers['authorization'];
+
+		if (!token) {
+			return res.status(400).send({
+				isError: true,
+				error: 'Token is required',
+			});
+		}
+
+		// Create user in our database
+		const newToken = authService.refreshToken(token);
+		// Set the new token as the users `token` cookie
+		res.cookie('token', newToken, {
+			maxAge: config.TOKEN_EXPIRATIONS * 1000,
+		});
+		// return new user
+		res.status(200).send(newToken);
+	} catch (error) {
+		console.error(error);
+		res.status(error?.status || 500).send({
+			isError: true,
+			error: error?.message || error,
+		});
+	}
+};
+
 module.exports = {
 	createNewUser,
 	findUser,

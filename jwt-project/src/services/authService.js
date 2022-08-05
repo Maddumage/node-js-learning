@@ -18,4 +18,13 @@ const findUser = async (oldUser) => {
 	}
 };
 
-module.exports = { createNewUser, findUser };
+const refreshToken = (oldToken) => {
+	try {
+		const user = Auth.refresh(oldToken);
+		return user;
+	} catch (error) {
+		throw error;
+	}
+};
+
+module.exports = { createNewUser, findUser, refreshToken };
